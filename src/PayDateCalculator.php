@@ -3,27 +3,49 @@
 namespace Burroughs;
 
 use Exception;
+use DateTime;
 
 class PayDateCalculator
 {
-    public function setOutputFile()
+    /** @var string $filename */
+    private $filename;
+
+    /** @var bool $debug */
+    private $debug;
+
+    /** @var DateTime $start_date */
+    private $start_date;
+
+    public function __construct()
     {
-        return 'this will fail';
+        $this->debug = false;
+        $this->start_date = new DateTime();
+    }
+
+    /**
+     * @param string $filename
+     * @return PayDateCalculator
+     */
+    public function setOutputFile($filename)
+    {
+        $this->filename = (string) $filename;
+        return $this;
     }
 
     public function getOutputFile()
     {
-        return 'this will fail';
+        return $this->filename;
     }
 
     public function isDebugOutput()
     {
-        return 'this will fail';
+        return $this->debug;
     }
 
-    public function setDebugOutput()
+    public function setDebugOutput($bool)
     {
-        return 'this will fail';
+        $this->debug = $bool;
+        return $this;
     }
 
     public function getResults()
@@ -31,14 +53,15 @@ class PayDateCalculator
         return 'this will fail';
     }
 
-    public function setStartDate()
+    public function setStartDate(DateTime $date)
     {
-        return 'this will fail';
+        $this->start_date = $date;
+        return $this;
     }
 
     public function getStartDate()
     {
-        return 'this will fail';
+        return $this->start_date;
     }
 
     public function calculateMonth()

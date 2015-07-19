@@ -33,7 +33,7 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
      */
     public function testGetAndSetFilename()
     {
-        $this->assertTrue($this->calc->setOutputFile('test.txt'));
+        $this->assertInstanceOf('\Burroughs\PayDateCalculator',$this->calc->setOutputFile('test.txt'));
 	    $this->assertEquals('test.txt',$this->calc->getOutputFile());
     }
 
@@ -41,17 +41,17 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
      * We might want the output to display in the terminal too
      * Check we can set the flag
      */
-    public function testgetAndSetDebugOutput()
+    public function testGetAndSetDebugOutput()
     {
         // Should be false by default
         $this->assertFalse($this->calc->isDebugOutput());
 
         // Should be able to set and get true
-        $this->assertTrue($this->calc->setDebugOutput(true));
+        $this->assertInstanceOf('\Burroughs\PayDateCalculator',$this->calc->setDebugOutput(true));
         $this->assertTrue($this->calc->isDebugOutput());
 
         // Should be able to set and get false
-        $this->assertTrue($this->calc->setDebugOutput(false));
+        $this->assertInstanceOf('\Burroughs\PayDateCalculator',$this->calc->setDebugOutput(false));
         $this->assertFalse($this->calc->isDebugOutput());
     }
 
@@ -70,7 +70,7 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
      *  By default we start on the current month
      *  But we might like to calculate a different date range
      */
-    public function getAndSetStartDate()
+    public function testGetAndSetStartDate()
     {
         // check default
         $date = new DateTime();
