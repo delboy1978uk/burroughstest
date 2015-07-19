@@ -27,6 +27,9 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
     {
         // unset the calculator after each test
         unset($this->calc);
+
+        // delete test.txt is exist
+        file_exists('test.txt') ? unlink('test.txt') : null;
     }
 
     /**
