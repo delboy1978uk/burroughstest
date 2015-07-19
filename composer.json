@@ -1,0 +1,15 @@
+{
+    "name": "delboy1978uk/burroughstest",
+    "description": "CLI utility to work pay dates out for a fictional company.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Derek McLean",
+            "email": "delboy1978uk@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev":{
+        "codeception/codeception":"dev-master"
+    }
+}

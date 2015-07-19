@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+    if(count($argv) == 1)
+    {
+        echo "
+______                                  _           _            _   
+| ___ \                                | |         | |          | |  
+| |_/ /_   _ _ __ _ __ ___  _   _  __ _| |__  ___  | |_ ___  ___| |_ 
+| ___ \ | | | '__| '__/ _ \| | | |/ _` | '_ \/ __| | __/ _ \/ __| __|
+| |_/ / |_| | |  | | | (_) | |_| | (_| | | | \__ \ | ||  __/\__ \ |_ 
+\____/ \__,_|_|  |_|  \___/ \__,_|\__, |_| |_|___/  \__\___||___/\__|
+                                   __/ |                             
+                                  |___/                              
+        ";
+        echo "\n\nBurroughs Pay Calculator\n";
+        echo "======================================\n\n";
+        echo "Usage: ./burroughs filename.txt\n\n";
+        echo " \n";
+        exit;
+    }
+
+    require_once('../vendor/autoload.php');
+
+    echo "\n";
+    echo "Do stuff here.\n";
+    echo "\n";
