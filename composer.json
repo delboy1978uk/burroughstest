@@ -11,5 +11,10 @@
     "require": {},
     "require-dev":{
         "codeception/codeception":"dev-master"
+    },
+    "autoload":{
+        "psr-4":{
+            "Burroughs\\":"src/"
+        }
     }
 }

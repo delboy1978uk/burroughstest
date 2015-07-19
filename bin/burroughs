@@ -21,6 +21,8 @@ ______                                  _           _            _
 
     require_once('../vendor/autoload.php');
 
+    use Burroughs\PayDateCalculator;
+
     echo "\n";
 
     // Create a new calculator 

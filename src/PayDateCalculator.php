@@ -4,7 +4,7 @@ namespace Burroughs;
 
 use Exception;
 
-class PayDateCalculator()
+class PayDateCalculator
 {
 
 }
