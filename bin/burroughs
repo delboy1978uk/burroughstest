@@ -22,5 +22,8 @@ ______                                  _           _            _
     require_once('../vendor/autoload.php');
 
     echo "\n";
-    echo "Do stuff here.\n";
+
+    // Create a new calculator 
+    $calc = new PayDateCalculator();
+
     echo "\n";
