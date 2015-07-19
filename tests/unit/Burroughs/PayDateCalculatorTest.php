@@ -3,6 +3,7 @@
 namespace Burroughs;
 
 use DateTime;
+use ReflectionClass;
 
 class PayDateCalculatorTest extends \Codeception\TestCase\Test
 {
@@ -59,10 +60,10 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
      *  By default we want to calculate 12 months
      *  But we might like to calculate more
      */
-    public function getAndSetMonthsToCalculate()
+    public function testGetAndSetMonthsToCalculate()
     {
         $this->assertEquals(12,$this->calc->getMonthsToCalculate());
-        $this->assertEquals(18,$this->calc->setMonthsToCalculate(18));
+        $this->assertInstanceOf('\Burroughs\PayDateCalculator',$this->calc->setMonthsToCalculate(18));
         $this->assertEquals(18,$this->calc->getMonthsToCalculate());
     }
 
@@ -93,7 +94,7 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
     {
         $this->calc->setOutputFile('test.txt');
         $this->assertTrue($this->invokeMethod($this->calc,'createFile'));
-        $this->assertInstanceOf('SplFileObject',$this->calc->getOutputFile());
+        $this->assertInstanceOf('SplFileObject',$this->calc->getResultsFile());
     }
 
 
@@ -241,14 +242,13 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
         $date = new DateTime('2016-09-18');
         $this->calc->setStartDate($date);
         $result = $this->invokeMethod($this->calc,'calculateMonth',[$date]);
-
-        $this->assertTrue($this->invokeMethod($this->calc,'addResult',[$result]));
+        $this->assertInstanceOf('\Burroughs\PayDateCalculator',$this->invokeMethod($this->calc,'addResult',[$result]));
         $result = $this->calc->getResults();
         $this->assertTrue(is_array($result));
         $this->assertTrue(count($result) == 1);
-        $this->assertTrue($result['month'] == 'September');
-        $this->assertTrue($result['salary_date'] == '2016-09-30');
-        $this->assertTrue($result['salary_date'] == '2016-10-19');
+        $this->assertTrue($result[0]['month'] == 'September');
+        $this->assertTrue($result[0]['salary_date'] == '30 Sep 2016');
+        $this->assertTrue($result[0]['bonus_date'] == '19 Oct 2016');
     }
 
     /**
@@ -257,12 +257,13 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
     public function testAddResultToFile()
     {
         $this->calc->setOutputFile('test.txt');
+        $this->invokeMethod($this->calc,'createFile');
         $result = [
             'month' == 'September',
             'salary_date' => '2016-09-30',
             'bonus_date' => '2016-10-19'
         ];
-        $this->assertTrue($this->invokeMethod($this->calc,'addResultToFile',[$result]));
+        $this->assertInstanceOf('\Burroughs\PayDateCalculator',$this->invokeMethod($this->calc,'addResultToFile',[$result]));
     }
 
     /**
@@ -271,12 +272,14 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
     public function testGetOutputFile()
     {
         $this->calc->setOutputFile('test.txt');
+        $this->invokeMethod($this->calc,'createFile');
         $result = [
             'month' == 'September',
             'salary_date' => '2016-09-30',
             'bonus_date' => '2016-10-19'
         ];
-        $this->assertInstanceOf('SplFileObject',$this->calc->getOutputFile());
+        $this->invokeMethod($this->calc,'addResultToFile',[$result]);
+        $this->assertInstanceOf('SplFileObject',$this->calc->getResultsFile());
     }
 
 
@@ -292,7 +295,7 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
      */
     public function invokeMethod(&$object, $methodName, array $parameters = array())
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);
         $method->setAccessible(true);
 
