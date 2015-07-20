@@ -150,7 +150,7 @@ class PayDateCalculator
             $date->modify('+1 month');
             $this->num_months -- ;
         }
-        return true;
+        return $this->results_array;
     }
 
     /**

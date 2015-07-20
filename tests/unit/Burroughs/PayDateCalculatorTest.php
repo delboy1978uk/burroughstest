@@ -237,6 +237,27 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
         $this->assertEquals('2016-10-19',$result['bonus_date']);
     }
 
+
+    public function testMoreDates()
+    {
+        $date = new DateTime('2016-04-01');
+        $this->calc->setStartDate($date);
+        $result = $this->invokeMethod($this->calc,'calculateMonth',[$date]);
+
+        // we should have an array with three keys
+        $valid = (is_array($result) && array_key_exists('month',$result) && array_key_exists('salary_date',$result) && array_key_exists('bonus_date',$result));
+        $this->assertTrue($valid);
+
+        // Month should read April
+        $this->assertEquals('April',$result['month']);
+
+        // Salary Date should read 2015-04-29 (The 30th is a Saturday)
+        $this->assertEquals('29 Apr 2016',$result['salary_date']);
+
+        // Bonus Date should read 2016-05-18 (the 15th is a Sunday)
+        $this->assertEquals('18 May 2016',$result['bonus_date']);
+    }
+
     /**
      * Test adding a result gets added to the results array
      */
@@ -282,6 +303,13 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
             'bonus_date' => '2016-10-19'
         ];
         $this->invokeMethod($this->calc,'addResultToFile',[$result]);
+        $this->assertInstanceOf('SplFileObject',$this->calc->getResultsFile());
+    }
+
+    public function testGenerateResult()
+    {
+        $this->calc->setOutputFile('test.txt');
+        $this->assertTrue(is_array($this->calc->generateResults()));
         $this->assertInstanceOf('SplFileObject',$this->calc->getResultsFile());
     }
 
