@@ -4,6 +4,7 @@ namespace Burroughs;
 
 use Exception;
 use DateTime;
+use SebastianBergmann\Comparator\DateTimeComparator;
 use SplFileObject;
 
 class PayDateCalculator
@@ -26,12 +27,24 @@ class PayDateCalculator
     /** @var SplFileObject $output_file */
     private $output_file;
 
+    private $date_modifier;
+
     public function __construct()
     {
         $this->debug = false;
         $this->start_date = new DateTime();
         $this->num_months = 12;
         $this->results_array = [];
+        $this->date_modifier = [
+            'salary' => [
+                'Sat' => '-1 day',
+                'Sun' => '-2 days',
+            ],
+            'bonus' => [
+                'Sat' => '+4 days',
+                'Sun' => '+3 days',
+            ],
+        ];
     }
 
     /**
@@ -161,19 +174,8 @@ class PayDateCalculator
     {
         $last_day = $date->format('t');
         $last = new DateTime($date->format('Y-m-'.$last_day.' H:i:s'));
-        $day = $last->format('D');
-        switch($day)
-        {
-            case 'Sat':
-                $last->modify('-1 day');
-                break;
-            case 'Sun':
-                $last->modify('-2 days');
-                break;
-            default:
-                break;
-        }
-        return $last;
+        $date = $this->weekendModifyDate('salary',$last);
+        return $date;
     }
 
     /**
@@ -185,20 +187,21 @@ class PayDateCalculator
         //set to 15th of next month
         $date->modify('+1 month');
         $date->setDate($date->format('Y'),$date->format('m'),15);
-        $day = $date->format('D');
-        switch($day)
-        {
-            case 'Sat':
-                $date->modify('+4 day');
-                break;
-            case 'Sun':
-                $date->modify('+3 days');
-                break;
-            default:
-                break;
-        }
+        $date = $this->weekendModifyDate('bonus',$date);
         return $date;
     }
+
+    /**
+     * @param $type
+     * @param DateTime $date
+     * @return DateTime
+     */
+    private function weekendModifyDate($type, DateTime $date)
+    {
+        $day = $date->format('D');
+        return ($day == 'Sat' || $day == 'Sun') ? $date->modify($this->date_modifier[$type][$day]) : $date;
+    }
+
 
     /**
      * @param array $array
@@ -212,7 +215,8 @@ class PayDateCalculator
     }
 
     /**
-     * @throw Exception
+     * @throws Exception
+     * @return bool
      */
     private function createFile()
     {
@@ -220,6 +224,11 @@ class PayDateCalculator
         return true;
     }
 
+    /**
+     * adds result to the array and the file
+     * @param array $result
+     * @return $this
+     */
     private function addResult(array $result)
     {
         $this->results_array[] = $result;
@@ -230,6 +239,10 @@ class PayDateCalculator
         return $this;
     }
 
+    /**
+     * @param array $result
+     * @return $this
+     */
     private function addResultToFile(array $result)
     {
         $csv = $this->toCSV($result);
