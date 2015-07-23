@@ -4,8 +4,9 @@ namespace Burroughs;
 
 use Exception;
 use DateTime;
-use SebastianBergmann\Comparator\DateTimeComparator;
 use SplFileObject;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class PayDateCalculator
 {
@@ -13,7 +14,7 @@ class PayDateCalculator
     private $filename;
 
     /** @var bool $debug */
-    private $debug;
+    private $debug_output;
 
     /** @var DateTime $start_date */
     private $start_date;
@@ -27,11 +28,22 @@ class PayDateCalculator
     /** @var SplFileObject $output_file */
     private $output_file;
 
+    /**
+     * @var array
+     */
     private $date_modifier;
 
+    /**
+     * @var
+     */
+    private $log;
+
+    /**
+     *  sets up the calculator
+     */
     public function __construct()
     {
-        $this->debug = false;
+        $this->debug_output = false;
         $this->start_date = new DateTime();
         $this->num_months = 12;
         $this->results_array = [];
@@ -45,6 +57,8 @@ class PayDateCalculator
                 'Sun' => '+3 days',
             ],
         ];
+        $this->log = new Logger('burroughs');
+        $this->log->pushHandler(new StreamHandler('php://stdout', Logger::INFO));
     }
 
     /**
@@ -72,7 +86,7 @@ class PayDateCalculator
      */
     public function isDebugOutput()
     {
-        return $this->debug;
+        return $this->debug_output;
     }
 
     /**
@@ -81,7 +95,7 @@ class PayDateCalculator
      */
     public function setDebugOutput($bool)
     {
-        $this->debug = $bool;
+        $this->debug_output = $bool;
         return $this;
     }
 
@@ -118,9 +132,10 @@ class PayDateCalculator
     public function calculateMonth(DateTime $date)
     {
         $month = $date->format('F');
+        $this->debug('Calculating '.$month.' '.$date->format('Y').' :');
         $salary = $this->calculateSalaryDay($date);
         $bonus = $this->calculateBonusDay($date);
-
+        $this->debug('=========================');
         $result = [
             'month' => $month,
             'salary_date' => $salary->format('d M Y'),
@@ -167,14 +182,15 @@ class PayDateCalculator
     }
 
     /**
-     * @param $date
+     * @param DateTime $date
      * @return DateTime
      */
-    private function calculateSalaryDay($date)
+    private function calculateSalaryDay(DateTime $date)
     {
-        $last_day = $date->format('t');
-        $last = new DateTime($date->format('Y-m-'.$last_day.' H:i:s'));
+        $last = new DateTime($date->format('Y-m-t H:i:s'));
+        $this->debug('The '.$last->format('tS').' is a '.$date->format('l').'.');
         $date = $this->weekendModifyDate('salary',$last);
+        $this->debug('Salary Day is '.$date->format('l tS F Y').'.');
         return $date;
     }
 
@@ -187,8 +203,22 @@ class PayDateCalculator
         //set to 15th of next month
         $date->modify('+1 month');
         $date->setDate($date->format('Y'),$date->format('m'),15);
+        $this->debug('The 15th of '.$date->format('F').' is a '.$date->format('l').'.');
         $date = $this->weekendModifyDate('bonus',$date);
+        $this->debug('Bonus Day is '.$date->format('l tS F Y').'.');
         return $date;
+    }
+
+    /**
+     * logs info if debug set
+     * @param $info
+     */
+    private function debug($info)
+    {
+        if($this->debug_output)
+        {
+            $this->log->info($info);
+        }
     }
 
     /**

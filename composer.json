@@ -8,7 +8,9 @@
             "email": "delboy1978uk@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "monolog/monolog": "^1.15"
+    },
     "require-dev":{
         "codeception/codeception":"dev-master"
     },

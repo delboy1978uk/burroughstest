@@ -313,6 +313,15 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
         $this->assertInstanceOf('SplFileObject',$this->calc->getResultsFile());
     }
 
+    /**
+     *  tests run with debug
+     */
+    public function testDebug()
+    {
+        $this->calc->setDebugOutput(true);
+        $this->assertNull($this->invokeMethod($this->calc,'debug',['for more complete code coverage']));
+    }
+
 
     /**
      * This method allows us to test protected and private methods without

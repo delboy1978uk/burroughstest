@@ -27,6 +27,7 @@ ______                                  _           _            _
     try {
         $calc = new PayDateCalculator();
         $calc->setOutputFile($argv[1]);
+        $calc->setDebugOutput(true);
         $calc->generateResults();
         echo $argv[1]." written.\n\n";
     }
