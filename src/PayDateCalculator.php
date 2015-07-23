@@ -211,7 +211,7 @@ class PayDateCalculator
 
     /**
      * logs info if debug set
-     * @param $info
+     * @param string $info
      */
     private function debug($info)
     {
@@ -222,7 +222,7 @@ class PayDateCalculator
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @param DateTime $date
      * @return DateTime
      */

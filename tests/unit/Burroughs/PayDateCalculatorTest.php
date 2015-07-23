@@ -237,7 +237,10 @@ class PayDateCalculatorTest extends \Codeception\TestCase\Test
         $this->assertEquals('2016-10-19',$result['bonus_date']);
     }
 
-
+    /**
+     *  test the other 2 both days are at the weekend
+     *  0 | 0
+     */
     public function testMoreDates()
     {
         $date = new DateTime('2016-04-01');
